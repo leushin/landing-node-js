@@ -1,0 +1,19 @@
+{
+    "server": {
+      "path": "http://localhost:3000",
+      "secure": "loft_secure_school"
+    },
+    "mail": {
+      "subject": "Сообщение с сайта",
+      "smtp": {
+        "host": "smtp.gmail.com",
+        "port": 465,
+        "secure": true,
+        "auth": {
+          "user": "",
+          "pass": ""
+        }
+      }
+    },
+    "upload": "./public/upload"
+  }
