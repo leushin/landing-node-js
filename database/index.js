@@ -86,38 +86,18 @@ DB.defaults({
   }
 }).write();
 
-DATABASE.on('skills/get', response => {
-  try {
-    response.reply(DB.get('skills').value());
-  } catch (err) {
-    response.replyErr(err);
-  }
-});
+global.DB = DB;
 
-DATABASE.on('skills/add', response => {
-  try {
-    DB.get('skills').value().forEach(item => {
-      item.number = response.data[item.type];
-    });
-    DB.write();
-    response.reply(true);
-  } catch (err) {
-    response.replyErr(err);
-  }
-});
+const skillsGet = require('./skills/get');
+const skillsAdd = require('./skills/add');
+const productsGet = require('./products/get');
+const productsAdd = require('./products/add');
+const usersGet = require('./users/get');
 
-DATABASE.on('products/get', response => {
-  try {
-    response.reply(DB.get('products').value());
-  } catch (err) {
-    response.replyErr(err);
-  }
-});
+DATABASE.on('skills/get', skillsGet);
+DATABASE.on('skills/add', skillsAdd);
 
-DATABASE.on('users/get', response => {
-  try {
-    response.reply(DB.get('users').value());
-  } catch (err) {
-    response.replyErr(err);
-  }
-});
+DATABASE.on('products/get', productsGet);
+DATABASE.on('products/add', productsAdd);
+
+DATABASE.on('users/get', usersGet);

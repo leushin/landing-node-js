@@ -1,4 +1,18 @@
 const express = require('express');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join(process.cwd(), './public', 'uploads'));
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({ storage });
 const router = express.Router();
 const ENGINE = global.ENGINE;
 
@@ -22,8 +36,8 @@ router.get('/admin', (req, res) => {
 
 router.post('/', (req, res) => {
   ENGINE.emit('index/post', req.body)
-    .then(data => res.render('index', data))
-    .catch(error => res.render('error', { message: error.message }));
+    .then(data => res.json(data))
+    .catch(error => res.json({ message: error.message }));
 });
 
 router.post('/login', (req, res) => {
@@ -45,10 +59,13 @@ router.post('/admin/skills', (req, res) => {
     .catch(error => res.render('error', { message: error.message }));
 });
 
-router.post('/admin/products', (req, res) => {
-  ENGINE.emit('products/add', req.body)
+router.post('/admin/products', upload.single('photo'), (req, res) => {
+  ENGINE.emit('products/add', { body: req.body, file: req.file })
     .then(() => res.redirect('/admin'))
-    .catch(error => res.render('error', { message: error.message }));
+    .catch(error => {
+      fs.unlinkSync(req.file.path);
+      return res.render('error', { message: error.message });
+    });
 });
 
 module.exports = router;

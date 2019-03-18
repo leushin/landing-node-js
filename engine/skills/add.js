@@ -3,10 +3,10 @@ const joi = require('joi');
 
 module.exports = response => {
   const schema = joi.object().keys({
-    age: joi.string().regex(/^\d+$/).required(),
-    concerts: joi.string().regex(/^\d+$/).required(),
-    cities: joi.string().regex(/^\d+$/).required(),
-    years: joi.string().regex(/^\d+$/).required(),
+    age: joi.string().max(5).regex(/^\d+$/).required(),
+    concerts: joi.string().max(5).regex(/^\d+$/).required(),
+    cities: joi.string().max(5).regex(/^\d+$/).required(),
+    years: joi.string().max(5).regex(/^\d+$/).required(),
   });
 
   joi.validate(response.data, schema, (err) => {

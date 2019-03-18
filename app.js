@@ -4,6 +4,8 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cookieSession = require('cookie-session');
+const helmet = require('helmet');
+const cluster = require('cluster');
 
 require('./database');
 require('./engine');
@@ -15,9 +17,17 @@ const app = express();
 app.set('views', path.join(__dirname, 'views', 'pages'));
 app.set('view engine', 'pug');
 
+app.use((req, res, next) => {
+  if (cluster.isWorker) {
+    console.log('ID: ', cluster.worker.id);
+  }
+  next();
+});
+
 app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(helmet());
+app.use(express.json({ limit: '2048kb' }));
+app.use(express.urlencoded({ extended: false, limit: 10000 }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 

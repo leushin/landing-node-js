@@ -7,17 +7,17 @@
     },
     {
       "type": "concerts",
-      "number": "2",
+      "number": "1",
       "text": "Концертов отыграл"
     },
     {
       "type": "cities",
-      "number": "3",
+      "number": "1",
       "text": "Максимальное число городов в туре"
     },
     {
       "type": "years",
-      "number": "4",
+      "number": "1",
       "text": "Лет на сцене в качестве скрипача"
     }
   ],
