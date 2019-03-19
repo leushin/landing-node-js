@@ -2,6 +2,15 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const rateLimit = require('express-rate-limit');
+
+const createAccountLimiter = rateLimit({
+  windowMs: 3 * 60 * 1000,
+  max: 3,
+  handler: (req, res) => {
+    res.json({ status: 'Превышен лимит попыток авторизаций. Попробуйте через 3 минуты' });
+  },
+});
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -40,7 +49,7 @@ router.post('/', (req, res) => {
     .catch(error => res.json({ message: error.message }));
 });
 
-router.post('/login', (req, res) => {
+router.post('/login', createAccountLimiter, (req, res) => {
   ENGINE.emit('login/post', req.body)
     .then(data => {
       if (data.isAuth) {
