@@ -49,7 +49,7 @@ router.post('/', (req, res) => {
     .catch(error => res.json({ message: error.message }));
 });
 
-router.post('/login', createAccountLimiter, (req, res) => {
+router.post('/login', (req, res) => {
   ENGINE.emit('login/post', req.body)
     .then(data => {
       if (data.isAuth) {
