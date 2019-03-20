@@ -1,14 +1,24 @@
 const ee = require('@nauma/eventemitter');
+const mongoose = require('mongoose');
 const DATABASE = new ee.EventEmitter('database');
 global.DATABASE = DATABASE;
 
-const low = require('lowdb');
-const FileSync = require('lowdb/adapters/FileSync');
+//const low = require('lowdb');
+//const FileSync = require('lowdb/adapters/FileSync');
 
-const adapter = new FileSync('db.json');
-const DB = low(adapter);
+//const adapter = new FileSync('db.json');
+//const DB = low(adapter);
 
-DB.defaults({
+const Schema = mongoose.Schema;
+
+// подключение
+const DB = mongoose.connect('mongodb://localhost:27017/landing', { useNewUrlParser: true });
+
+const Skill = mongoose.model('Skill', new Schema({ email: String, password: String }));
+const Product = mongoose.model('Product', new Schema({ src: String, name: String, price: Number }));
+const User = mongoose.model('User', new Schema({ email: String, password: String }));
+
+const defaultData = {
   skills: [
     {
       'type': 'age',
@@ -31,7 +41,7 @@ DB.defaults({
       'text': 'Лет на сцене в качестве скрипача'
     }
   ],
-  'products': [
+  products: [
     {
       'src': './assets/img/products/Work1.jpg',
       'name': 'Вино вдохновение',
@@ -78,13 +88,16 @@ DB.defaults({
       'price': 600
     }
   ],
-  'users': {
-    'admin': {
-      'email': 'admin@test.ru',
-      'password': 'admin'
-    }
-  }
-}).write();
+  users: [{
+    'email': 'admin@test.ru',
+    'password': 'admin'
+  }]
+};
+
+User.create({
+  'email': 'admin@test.ru',
+  'password': 'admin'
+}, err => console.log(err));
 
 global.DB = DB;
 
