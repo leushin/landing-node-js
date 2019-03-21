@@ -3,20 +3,31 @@ const mongoose = require('mongoose');
 const DATABASE = new ee.EventEmitter('database');
 global.DATABASE = DATABASE;
 
-//const low = require('lowdb');
-//const FileSync = require('lowdb/adapters/FileSync');
-
-//const adapter = new FileSync('db.json');
-//const DB = low(adapter);
-
 const Schema = mongoose.Schema;
+mongoose.Promise = global.Promise;
 
-// подключение
-const DB = mongoose.connect('mongodb://localhost:27017/landing', { useNewUrlParser: true });
+mongoose
+  .connect('mongodb://localhost:27017/db', { useNewUrlParser: true })
+  .catch(err => {
+    console.error(err);
+    throw err;
+  });
 
-const Skill = mongoose.model('Skill', new Schema({ email: String, password: String }));
-const Product = mongoose.model('Product', new Schema({ src: String, name: String, price: Number }));
-const User = mongoose.model('User', new Schema({ email: String, password: String }));
+mongoose.connection.on('connected', () => console.log('Mongoose default connection open'));
+mongoose.connection.on('disconnected', () => console.log('Mongoose default connection disconnected'));
+
+process.on('SIGINT', () => {
+  mongoose.connection.close(() => {
+    console.log('Mongoose default connection disconnected through app termination');
+    process.exit(0);
+  });
+});
+
+const models = {
+  users: mongoose.model('User', new Schema({ email: String, password: String })),
+  skills: mongoose.model('Skill', new Schema({ type: String, number: String, text: String })),
+  products: mongoose.model('Product', new Schema({ src: String, name: String, price: Number }))
+};
 
 const defaultData = {
   skills: [
@@ -94,12 +105,13 @@ const defaultData = {
   }]
 };
 
-User.create({
-  'email': 'admin@test.ru',
-  'password': 'admin'
-}, err => console.log(err));
-
-global.DB = DB;
+Object.keys(defaultData).forEach((key) => {
+  models[key].find({}, (err, items) => {
+    if (!items.length) {
+      models[key].insertMany(defaultData[key], err => console.log(err));
+    }
+  });
+});
 
 const skillsGet = require('./skills/get');
 const skillsAdd = require('./skills/add');

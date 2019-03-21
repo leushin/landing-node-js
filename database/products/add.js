@@ -1,10 +1,14 @@
-const DB = global.DB;
+const mongoose = require('mongoose');
+const Product = mongoose.model('Product');
 
 module.exports = response => {
-  try {
-    DB.get('products').push(response.data).write();
-    response.reply(true);
-  } catch (err) {
-    response.replyErr(err);
-  }
+  const newProduct = new Product(response.data);
+
+  newProduct.save()
+    .then(() => {
+      response.reply(true);
+    })
+    .catch((err) => {
+      response.replyErr(err);
+    });
 };

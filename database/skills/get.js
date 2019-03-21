@@ -1,9 +1,15 @@
-const DB = global.DB;
+//const DB = global.DB;
+const mongoose = require('mongoose');
+const Skill = mongoose.model('Skill');
 
 module.exports = response => {
-  try {
-    response.reply(DB.get('skills').value());
-  } catch (err) {
-    response.replyErr(err);
-  }
+  Skill.find()
+    .then(items => {
+      if (items.length) {
+        response.reply(items);
+      }
+    })
+    .catch((err) => {
+      response.replyErr(err);
+    });
 };

@@ -1,9 +1,14 @@
-const DB = global.DB;
+const mongoose = require('mongoose');
+const Product = mongoose.model('Product');
 
 module.exports = response => {
-  try {
-    response.reply(DB.get('products').value());
-  } catch (err) {
-    response.replyErr(err);
-  }
+  Product.find()
+    .then(items => {
+      if (items.length) {
+        response.reply(items);
+      }
+    })
+    .catch((err) => {
+      response.replyErr(err);
+    });
 };
