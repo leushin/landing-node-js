@@ -2,22 +2,22 @@
   "skills": [
     {
       "type": "age",
-      "number": "10",
+      "number": "1",
       "text": "Возраст начала занятий на скрипке"
     },
     {
       "type": "concerts",
-      "number": "20",
+      "number": "1",
       "text": "Концертов отыграл"
     },
     {
       "type": "cities",
-      "number": "30",
+      "number": "1",
       "text": "Максимальное число городов в туре"
     },
     {
       "type": "years",
-      "number": "40",
+      "number": "1",
       "text": "Лет на сцене в качестве скрипача"
     }
   ],
