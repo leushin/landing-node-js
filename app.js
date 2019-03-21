@@ -62,6 +62,6 @@ app.use(session({
 
 app.use(rest.routes());
 
-app.listen(3000, () => {
+module.exports = app.listen(3000, () => {
   console.log('Server start on port: 3000');
 });

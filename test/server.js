@@ -1,5 +1,5 @@
 const chai = require('chai');
-const cheerio = require('cherio')
+const cheerio = require('cherio');
 const expect = chai.expect;
 const chaiHttp = require('chai-http');
 const server = require('../app');
