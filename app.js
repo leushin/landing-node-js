@@ -38,7 +38,6 @@ app.use(async (ctx, next) => {
   } catch (err) {
     ctx.status = err.status || 500;
     ctx.body = err.message;
-    console.log(err);
     ctx.app.emit('error', err, ctx);
   }
 });
@@ -51,7 +50,15 @@ app.on('error', (err, ctx) => {
   });
 });
 
-//app.use(cookieParser());
+app.use(session({
+  "key": "koa:sess",
+  "maxAge": null,
+  "overwrite": true,
+  "httpOnly": true,
+  "signed": false,
+  "rolling": false,
+  "renew": false
+}, app))
 
 app.use(rest.routes());
 
