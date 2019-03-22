@@ -1,5 +1,6 @@
 const ee = require('@nauma/eventemitter');
 const mongoose = require('mongoose');
+const cluster = require('cluster');
 const DATABASE = new ee.EventEmitter('database');
 global.DATABASE = DATABASE;
 
@@ -107,7 +108,7 @@ const defaultData = {
 
 Object.keys(defaultData).forEach((key) => {
   models[key].find({}, (err, items) => {
-    if (!items.length) {
+    if (!items.length && cluster.isMaster) {
       models[key].insertMany(defaultData[key], err => console.log(err));
     }
   });

@@ -5,10 +5,8 @@
  */
 
 var app = require('../app');
-var debug = require('debug')('landing-nodejs:server');
+var debug = require('debug')('file-storage:server');
 var http = require('http');
-const cluster = require('cluster');
-const cpus = require('os').cpus();
 
 /**
  * Get port from environment and store in Express.
@@ -27,33 +25,9 @@ var server = http.createServer(app);
  * Listen on provided port, on all network interfaces.
  */
 
-function startWorker() {
-  const worker = cluster.fork();
-  console.log('Cluster: ', worker.id);
-}
-  
-if (cluster.isWorker) {
-  console.log(`${cluster.worker.id}: ${process.pid}`);
-}
-  
-if (cluster.isMaster) {
-  cpus.forEach(() => startWorker());
-  cluster.on('disconnect', worker => {
-    console.log('disconnect worker: ', worker.id);
-  });
-  cluster.on('exit', (worker, code, signal) => {
-    console.log(
-      `worker ${
-        worker.id
-      } disconnect with code ${code} (${signal}), restarting...`
-    );
-    startWorker();
-  });
-} else {
-  server.listen(port);
-  server.on('error', onError);
-  server.on('listening', onListening);
-}
+server.listen(port);
+server.on('error', onError);
+server.on('listening', onListening);
 
 /**
  * Normalize a port into a number, string, or false.
@@ -90,16 +64,16 @@ function onError(error) {
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
-  case 'EACCES':
-    console.error(bind + ' requires elevated privileges');
-    process.exit(1);
-    break;
-  case 'EADDRINUSE':
-    console.error(bind + ' is already in use');
-    process.exit(1);
-    break;
-  default:
-    throw error;
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use');
+      process.exit(1);
+      break;
+    default:
+      throw error;
   }
 }
 
